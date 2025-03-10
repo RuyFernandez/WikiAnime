@@ -1,0 +1,205 @@
+/* Estilos para la página de detalles */
+.details-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 1200px;
+  margin: var(--spacing-xl) auto;
+  padding: 0 var(--spacing-lg);
+}
+
+.details-header {
+  display: flex;
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+}
+
+.details-image-container {
+  flex-shrink: 0;
+  position: relative;
+  width: 280px;
+  height: 400px;
+  overflow: hidden;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--card-shadow);
+}
+
+.details-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-medium);
+}
+
+.details-image-container:hover .details-image {
+  transform: scale(1.05);
+}
+
+.details-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.details-title {
+  font-size: var(--font-size-xxl);
+  font-weight: 700;
+  margin-bottom: var(--spacing-md);
+  color: var(--text-color);
+}
+
+.details-japanese-title {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-md);
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.details-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.details-meta-item {
+  display: flex;
+  align-items: center;
+  background-color: var(--tag-bg);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--border-radius-lg);
+  font-size: var(--font-size-sm);
+  color: var(--text-color);
+}
+
+.details-meta-icon {
+  margin-right: var(--spacing-xs);
+  color: var(--button-primary-bg);
+}
+
+.details-synopsis {
+  margin-top: var(--spacing-lg);
+  line-height: 1.6;
+  color: var(--text-color);
+}
+
+.details-section {
+  margin-top: var(--spacing-xl);
+}
+
+.details-section-title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-xs);
+  border-bottom: 2px solid var(--border-color);
+  color: var(--text-color);
+}
+
+.details-genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+}
+
+.details-genre {
+  background-color: var(--button-secondary-bg);
+  color: var(--button-secondary-text);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--border-radius-lg);
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-medium);
+}
+
+.details-genre:hover {
+  background-color: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  transform: translateY(-2px);
+}
+
+
+
+.details-button {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-medium);
+}
+
+.details-button:hover {
+  background-color: var(--link-hover-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Estilos responsivos */
+@media (max-width: 992px) {
+  .details-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .details-image-container {
+    width: 220px;
+    height: 320px;
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .details-meta {
+    justify-content: center;
+  }
+
+  .details-actions {
+    justify-content: center;
+  }
+
+  .details-button {
+    margin-block-end: var(--spacing-lg);
+  }
+}
+
+@media (max-width: 768px) {
+  .details-container {
+    padding: 0 var(--spacing-md);
+    margin: var(--spacing-lg) auto;
+  }
+
+  .details-title {
+    font-size: var(--font-size-xl);
+  }
+
+  .details-japanese-title {
+    font-size: var(--font-size-md);
+  }
+
+  .details-statistics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .details-meta {
+    gap: var(--spacing-sm);
+  }
+
+  .details-meta-item {
+    font-size: var(--font-size-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+
+  .details-statistics {
+    grid-template-columns: 1fr;
+  }
+
+  .details-actions {
+    flex-direction: column;
+  }
+}

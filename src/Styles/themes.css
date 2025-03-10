@@ -1,0 +1,271 @@
+/* VARIABLES GLOBALES PARA EL TEMA CLARO (COMBINANDO ESTILO DRAGON BALL Y ANIME) */
+:root, .light-theme {
+  /* Colores base e inspiración Dragon Ball */
+  --background-color: #fff5e6;
+  --header-bg: #ff0000;
+  --button-primary-bg: #ff8c42;
+  --button-primary-text: #ffffff;
+  --button-secondary-bg: #f0d9b5;
+  --button-secondary-text: #333333;
+  --input-bg: #ffffff;
+  --input-border: #ff8c42;
+  --scrollbar-thumb: #ff0000;
+  --scrollbar-track: #fff5e6;
+  --hover-bg: #ffe4c4;
+  --selection-bg: #ff8c42;
+  --selection-color: #ffffff;
+  --success-color: #4caf50;
+  --error-color: #f44336;
+  --warning-color: #ff9800;
+  --info-color: #2196f3;
+
+  --text-color: #2d3748;
+  --text-muted: #718096;
+  --heading-color: #1a202c;
+  --link-color: #805ad5;
+  --link-hover-color: #6b46c1;
+  --border-color: #e2e8f0;
+  --accent-color: #f56565;
+  
+  --header-text: #2d3748;
+  --card-bg: #ffffff;
+  --body-bg: #f7fafc;
+  --button-primary-hover-bg: #6b46c1;
+  --button-hover-bg: rgba(0, 0, 0, 0.05);
+  --focus-ring-color: rgba(128, 90, 213, 0.4);
+  
+  /* Tipografía */
+  --font-primary: 'ubuntu', sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-xxl: 2.5rem;
+  
+  /* Espaciado */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 3rem;
+  
+  /* Bordes y radios */
+  --border-radius-sm: 4px;       
+  --border-radius-md: 8px;       
+  --border-radius-lg: 16px;      
+  --border-radius-circle: 50%;
+  
+  /* Sombras */
+  --card-shadow: 0 4px 8px rgba(255, 140, 66, 0.2);
+  --card-shadow-hover: 0 10px 15px rgba(0, 0, 0, 0.15);
+  
+  /* Dimensiones */
+  --max-width-content: 1400px;
+  --sidebar-width: 240px;
+  --header-height: 60px;
+  
+  /* Transiciones */
+  --transition-short: 0.2s ease;
+  --transition-medium: 0.3s ease;
+  --transition-long: 0.5s ease;
+  --transition-fast: 150ms ease;
+  --transition-slow: 500ms ease;
+  
+  /* Filtros y efectos */
+  --manga-filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  --manga-border: 2px solid #2d3748;
+}
+
+/* VARIABLES GLOBALES PARA EL TEMA OSCURO */
+.dark-theme {
+  /* Ajustes oscuros estilo Dragon Ball */
+  --background-color: #1a1a1a;
+  --header-bg: #cc5500;
+  --button-primary-bg: #cc5500;
+  --button-primary-text: #ffffff;
+  --button-secondary-bg: #444444;
+  --button-secondary-text: #e0e0e0;
+  --input-bg: #2d2d2d;
+  --input-border: #cc5500;
+  --scrollbar-thumb: #cc5500;
+  --scrollbar-track: #1a1a1a;
+  --hover-bg: #333333;
+  --selection-bg: #cc5500;
+  --selection-color: #ffffff;
+  --success-color: #66bb6a;
+  --error-color: #e57373;
+  --warning-color: #ffb74d;
+  --info-color: #64b5f6;
+  
+  --text-color: #e2e8f0;
+  --text-muted: #a0aec0;
+  --heading-color: #f7fafc;
+  --link-color: #d6bcfa;
+  --link-hover-color: #b794f4;
+  --border-color: #4a5568;
+  --accent-color: #fc8181;
+  
+  --header-text: #f7fafc;
+  --card-bg: #2d3748;
+  --body-bg: #1a202c;
+  --input-bg: #2d3748;
+  --input-border: #4a5568;
+  --button-primary-bg: #9f7aea;
+  --button-primary-hover-bg: #b794f4;
+  --button-primary-text: #1a202c;
+  --button-hover-bg: rgba(255, 255, 255, 0.1);
+  --hover-bg: rgba(159, 122, 234, 0.2);
+  --focus-ring-color: rgba(159, 122, 234, 0.4);
+  --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --card-shadow-hover: 0 10px 15px rgba(0, 0, 0, 0.4);
+  --manga-border: 2px solid #e2e8f0;
+}
+
+/* ESTILOS GENERALES */
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: var(--font-primary);
+  transition: background-color var(--transition-medium), color var(--transition-medium);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-primary);
+  color: var(--text-color);
+  margin-bottom: var(--spacing-md);
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: var(--border-radius-sm);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--link-color);
+}
+
+/* Estilos para enlaces */
+a {
+  color: var(--link-color);
+  transition: color var(--transition-medium);
+}
+
+a:hover {
+  color: var(--link-hover-color);
+}
+
+/* Estilos para inputs */
+input, textarea, select {
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text-color);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  transition: background-color var(--transition-medium), border-color var(--transition-medium), color var(--transition-medium);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--link-color);
+}
+
+
+/* Animaciones y utilidades */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes speedLines {
+  0% { transform: translateX(-100%) skewX(-20deg); opacity: 0; }
+  50% { opacity: 0.5; }
+  100% { transform: translateX(100%) skewX(-20deg); opacity: 0; }
+}
+
+.fade-in {
+  animation: fadeIn var(--transition-medium) forwards;
+}
+
+.slide-up {
+  animation: slideUp var(--transition-medium) forwards;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+.pulse {
+  animation: pulse 2s ease infinite;
+}
+
+/* Estados de carga y error */
+.loading-icon {
+  font-size: 2rem;
+  color: var(--accent-color);
+  margin-bottom: var(--spacing-md);
+}
+
+.error-icon {
+  font-size: 2rem;
+  color: var(--error-color);
+  margin-bottom: var(--spacing-md);
+}
+
+.warning-icon {
+  font-size: 2rem;
+  color: var(--warning-color);
+  margin-bottom: var(--spacing-md);
+}
+
+.info-icon {
+  font-size: 2rem;
+  color: var(--info-color);
+  margin-bottom: var(--spacing-md);
+}
+
+.loading-container, 
+.error-container,
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  text-align: center;
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--card-shadow);
+  margin: var(--spacing-lg) auto;
+  max-width: 600px;
+  border: var(--manga-border);
+}
+
+.error-container {
+  border-left: 4px solid var(--error-color);
+}
+
+.loading-message,
+.error-message {
+  font-size: var(--font-size-lg);
+  margin: var(--spacing-sm) 0;
+}
