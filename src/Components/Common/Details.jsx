@@ -211,7 +211,7 @@ export default function Detail({ type }) {
                 <div>
                   <h3 className="details-section-title">Tráiler</h3>
                   <iframe
-                    src={data.trailer.embed_url}
+                    src={`${data.trailer.embed_url}?autoplay=0`}
                     title="Tráiler"
                     allow="accelerometer; clipboard-write; encrypted-media; gyroscope"
                     allowFullScreen
