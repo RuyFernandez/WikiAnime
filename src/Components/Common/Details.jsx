@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import useFetch from "../../hooks/useFetch";
-import { FaStar, FaCalendar, FaClock, FaGlobe } from "react-icons/fa";
+import { FaStar, FaCalendar, FaClock, FaGlobe, FaTag, FaTv, FaChartLine } from "react-icons/fa";
 import "../../../src/Styles/Details.css";
 
 export default function Detail({ type }) {
@@ -14,10 +14,11 @@ export default function Detail({ type }) {
     data: apiData,
     loading,
     error,
-  } = useFetch(`${API_BASE_URL}/${type}/${id}`);
+  } = useFetch(`${API_BASE_URL}/${type}/${id}/full`);
 
   useEffect(() => {
     if (apiData) {
+      console.log(apiData);
       setData(apiData.data);
     }
   }, [apiData]);
@@ -41,7 +42,9 @@ export default function Detail({ type }) {
   if (!data) {
     return (
       <div className="details-container">
-        <div className="error-message">No se encontró información para este título.</div>
+        <div className="error-message">
+          No se encontró información para este título.
+        </div>
       </div>
     );
   }
@@ -50,19 +53,21 @@ export default function Detail({ type }) {
     <div className="details-container">
       <div className="details-header">
         <div className="details-image-container">
-          <img 
-            src={data.images?.jpg?.large_image_url || data.images?.jpg?.image_url} 
+          <img
+            src={
+              data.images?.jpg?.large_image_url || data.images?.jpg?.image_url
+            }
             alt={data.title}
             className="details-image"
           />
         </div>
-        
+
         <div className="details-info">
           <h1 className="details-title">{data.title}</h1>
           {data.title_japanese && (
             <h2 className="details-japanese-title">{data.title_japanese}</h2>
           )}
-          
+
           <div className="details-meta">
             {data.score && (
               <div className="details-meta-item">
@@ -70,36 +75,56 @@ export default function Detail({ type }) {
                 <span>{data.score}</span>
               </div>
             )}
-            
-            {type === 'anime' && data.aired?.from && (
+
+            {data.type && (
               <div className="details-meta-item">
-                <FaCalendar className="details-meta-icon" />
-                <span>{new Date(data.aired.from).getFullYear()}</span>
+                <FaTag className="details-meta-icon" />
+                <span>{data.type}</span>
               </div>
             )}
-            
-            {type === 'anime' && data.episodes && (
+
+            {data.episodes && (
               <div className="details-meta-item">
                 <FaClock className="details-meta-icon" />
                 <span>{data.episodes} episodios</span>
               </div>
             )}
-            
+
+            {data.rating && (
+              <div className="details-meta-item">
+                <FaStar className="details-meta-icon" />
+                <span>{data.rating}</span>
+              </div>
+            )}
+
+            {data.aired?.string && (
+              <div className="details-meta-item">
+                <FaCalendar className="details-meta-icon" />
+                <span>{data.aired.string}</span>
+              </div>
+            )}
+
+            {data.broadcast?.string && (
+              <div className="details-meta-item">
+                <FaTv className="details-meta-icon" />
+                <span>{data.broadcast.string}</span>
+              </div>
+            )}
+
+            {data.popularity && (
+              <div className="details-meta-item">
+                <FaChartLine className="details-meta-icon" />
+                <span>#{data.popularity}</span>
+              </div>
+            )}
             {data.status && (
               <div className="details-meta-item">
                 <FaGlobe className="details-meta-icon" />
                 <span>{data.status}</span>
               </div>
             )}
-            
-            {type === 'anime' && data.duration && (
-              <div className="details-meta-item">
-                <FaClock className="details-meta-icon" />
-                <span>{data.duration}</span>
-              </div>
-            )}
           </div>
-          
+
           {data.synopsis && (
             <div className="details-synopsis">
               <p>{data.synopsis}</p>
@@ -126,7 +151,7 @@ export default function Detail({ type }) {
             </div>
           )}
 
-          {type === 'manga' && (
+          {type === "manga" && (
             <>
               {data.chapters && (
                 <div className="details-meta-item">
@@ -153,7 +178,10 @@ export default function Detail({ type }) {
                   <h3 className="details-section-title">Editorial</h3>
                   <div className="details-publishers">
                     {data.publishers.map((publisher) => (
-                      <span key={publisher.mal_id} className="details-publisher">
+                      <span
+                        key={publisher.mal_id}
+                        className="details-publisher"
+                      >
                         {publisher.name}
                       </span>
                     ))}
@@ -163,11 +191,13 @@ export default function Detail({ type }) {
             </>
           )}
 
-          {type === 'anime' && (
+          {type === "anime" && (
             <>
               {data.studios && data.studios.length > 0 && (
                 <div className="details-section">
-                  <h3 className="details-section-title">Estudio de producción</h3>
+                  <h3 className="details-section-title">
+                    Estudio de producción
+                  </h3>
                   <div className="details-studios">
                     {data.studios.map((studio) => (
                       <span key={studio.mal_id} className="details-studio">
@@ -177,15 +207,16 @@ export default function Detail({ type }) {
                   </div>
                 </div>
               )}
-              {data.trailer && data.trailer.url && (
+              {data.trailer && data.trailer.embed_url && (
                 <div>
                   <h3 className="details-section-title">Tráiler</h3>
                   <iframe
-                    className="details-trailer"
-                    title="trailer"
                     src={data.trailer.embed_url}
+                    title="Tráiler"
+                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope"
                     allowFullScreen
-                  ></iframe>
+                    className="details-trailer"
+                  />
                 </div>
               )}
             </>
@@ -194,14 +225,21 @@ export default function Detail({ type }) {
           {data.url && (
             <div className="details-section">
               <h3 className="details-section-title">Enlace oficial</h3>
-              <a href={data.url} target="_blank" rel="noopener noreferrer" className="details-link">
+              <a
+                href={data.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="details-link"
+              >
                 Visitar página oficial
               </a>
             </div>
           )}
         </div>
       </div>
-      <button onClick={() => navigate(-1)} className="details-button">Volver</button>
+      <button onClick={() => navigate(-1)} className="details-button">
+        Volver
+      </button>
     </div>
   );
 }

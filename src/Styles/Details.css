@@ -140,6 +140,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: all var(--transition-medium);
+  margin-block-end: var(--spacing-xl);
 }
 
 .details-button:hover {
