@@ -15,6 +15,9 @@ export default function JikanSearch({ searchValue }) {
   const [error, setError] = useState(null);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
+  const [sortCriteria, setSortCriteria] = useState('popularity');
+  const [sortOrder, setSortOrder] = useState('desc');
+  const [cache, setCache] = useState({});
 
   const API_BASE_URL = "https://api.jikan.moe/v4";
   const location = useLocation();
@@ -23,20 +26,63 @@ export default function JikanSearch({ searchValue }) {
   const isAnimePage = location.pathname.includes("anime");
   const isMangaPage = location.pathname.includes("manga");
 
+  const getSortParam = (criteria) => {
+    if (isMangaPage) {
+      switch (criteria) {
+        case 'popularity':
+          return 'popularity';
+        case 'score':
+          return 'score';
+        case 'title':
+          return 'title';
+        case 'chapters':
+          return 'chapters';
+        case 'start_date':
+          return 'start_date';
+        default:
+          return 'popularity';
+      }
+    } else {
+      switch (criteria) {
+        case 'popularity':
+          return 'popularity';
+        case 'score':
+          return 'score';
+        case 'title':
+          return 'title';
+        case 'episodes':
+          return 'episodes';
+        case 'start_date':
+          return 'start_date';
+        default:
+          return 'popularity';
+      }
+    }
+  };
+
   const animeSearchUrl = searchValue
-    ? `${API_BASE_URL}/anime?q=${searchValue}`
+    ? `${API_BASE_URL}/anime?q=${searchValue}&order_by=${getSortParam(sortCriteria)}&sort=${sortOrder}`
     : null;
   const mangaSearchUrl = searchValue
-    ? `${API_BASE_URL}/manga?q=${searchValue}`
+    ? `${API_BASE_URL}/manga?q=${searchValue}&order_by=${getSortParam(sortCriteria)}&sort=${sortOrder}`
     : null;
 
   const animeGenreUrl =
     genreFilter && isAnimePage
-      ? `${API_BASE_URL}/anime?genres=${genreFilter}&page=1`
+      ? `${API_BASE_URL}/anime?genres=${genreFilter}&order_by=${getSortParam(sortCriteria)}&sort=${sortOrder}&page=1`
       : null;
   const mangaGenreUrl =
     genreFilter && isMangaPage
-      ? `${API_BASE_URL}/manga?genres=${genreFilter}&page=1`
+      ? `${API_BASE_URL}/manga?genres=${genreFilter}&order_by=${getSortParam(sortCriteria)}&sort=${sortOrder}&page=1`
+      : null;
+
+  const initialAnimeUrl =
+    !searchValue && !genreFilter
+      ? `${API_BASE_URL}/seasons/now?order_by=${getSortParam(sortCriteria)}&sort=${sortOrder}&limit=20`
+      : null;
+  const initialMangaUrl =
+    !searchValue && !genreFilter
+      ? `${API_BASE_URL}/top/manga?order_by=${getSortParam(sortCriteria)}&sort=${sortOrder}&limit=10`
       : null;
 
   const {
@@ -61,13 +107,6 @@ export default function JikanSearch({ searchValue }) {
     error: mangaGenreError,
   } = useFetch(mangaGenreUrl);
 
-  const initialAnimeUrl =
-    !searchValue && !genreFilter
-      ? `${API_BASE_URL}/seasons/now?&limit=20`
-      : null;
-  const initialMangaUrl =
-    !searchValue && !genreFilter ? `${API_BASE_URL}/top/manga?&limit=10` : null;
-
   const {
     data: initialAnimeData,
     loading: initialAnimeLoading,
@@ -78,6 +117,116 @@ export default function JikanSearch({ searchValue }) {
     loading: initialMangaLoading,
     error: initialMangaError,
   } = useFetch(initialMangaUrl);
+
+  const sortAnimeList = (list, criteria, order) => {
+    if (!list || list.length === 0) return list;
+
+    return list.slice().sort((a, b) => {
+      let valueA, valueB;
+      switch (criteria) {
+        case 'popularity':
+          valueA = a.popularity || 0;
+          valueB = b.popularity || 0;
+          break;
+        case 'score':
+          valueA = a.score || 0;
+          valueB = b.score || 0;
+          break;
+        case 'title':
+          valueA = a.title || '';
+          valueB = b.title || '';
+          break;
+        case 'episodes':
+          valueA = a.episodes || 0;
+          valueB = b.episodes || 0;
+          break;
+        case 'chapters':
+          valueA = a.chapters || 0;
+          valueB = b.chapters || 0;
+          break;
+        case 'start_date':
+          valueA = new Date(a.aired?.from || 0);
+          valueB = new Date(b.aired?.from || 0);
+          break;
+        default:
+          return 0;
+      }
+
+      if (order === 'asc') {
+        return valueA > valueB ? 1 : -1;
+      } else {
+        return valueA < valueB ? 1 : -1;
+      }
+    });
+  };
+
+  const debounce = (func, wait) => {
+    let timeout;
+    return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+  };
+
+  const fetchMoreData = debounce(async () => {
+    if (!hasMore || isRequesting) return;
+
+    const cacheKey = `${searchValue || 'initial'}-${genreFilter || 'all'}-${page + 1}`;
+    if (cache[cacheKey]) {
+      if (isAnimePage) {
+        setAnimeList((prev) => [...prev, ...cache[cacheKey]]);
+      } else if (isMangaPage) {
+        setMangaList((prev) => [...prev, ...cache[cacheKey]]);
+      }
+      setPage((prev) => prev + 1);
+      return;
+    }
+
+    setIsRequesting(true);
+    const nextPage = page + 1;
+
+    try {
+      let url = null;
+      if (searchValue) {
+        if (isAnimePage) {
+          url = `${API_BASE_URL}/anime?q=${searchValue}&order_by=${getSortParam(sortCriteria)}&sort=${sortOrder}&page=${nextPage}`;
+        } else if (isMangaPage) {
+          url = `${API_BASE_URL}/manga?q=${searchValue}&order_by=${getSortParam(sortCriteria)}&sort=${sortOrder}&page=${nextPage}`;
+        }
+      } else if (genreFilter) {
+        if (isAnimePage) {
+          url = `${API_BASE_URL}/anime?genres=${genreFilter}&order_by=${getSortParam(sortCriteria)}&sort=${sortOrder}&page=${nextPage}`;
+        } else if (isMangaPage) {
+          url = `${API_BASE_URL}/manga?genres=${genreFilter}&order_by=${getSortParam(sortCriteria)}&sort=${sortOrder}&page=${nextPage}`;
+        }
+      } else {
+        if (isAnimePage) {
+          url = `${API_BASE_URL}/seasons/now?order_by=${getSortParam(sortCriteria)}&sort=${sortOrder}&limit=20&page=${nextPage}`;
+        } else if (isMangaPage) {
+          url = `${API_BASE_URL}/top/manga?order_by=${getSortParam(sortCriteria)}&sort=${sortOrder}&limit=10&page=${nextPage}`;
+        }
+      }
+
+      if (url) {
+        const response = await fetch(url);
+        if (response.ok) {
+          const data = await response.json();
+          setCache((prev) => ({ ...prev, [cacheKey]: data.data }));
+          if (isAnimePage) {
+            setAnimeList((prev) => [...prev, ...data.data]);
+          } else if (isMangaPage) {
+            setMangaList((prev) => [...prev, ...data.data]);
+          }
+          setHasMore(data.pagination?.has_next_page || false);
+          setPage(nextPage);
+        }
+      }
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsRequesting(false);
+    }
+  }, 300);
 
   useEffect(() => {
     if (animeData) {
@@ -161,72 +310,47 @@ export default function JikanSearch({ searchValue }) {
     mangaGenreError,
   ]);
 
-  const fetchMoreData = async () => {
-    if (!hasMore || isRequesting) return;
-
-    console.log("Fetching more data, page:", page + 1);
-    setIsRequesting(true);
-
-    const nextPage = page + 1;
-    setPage(nextPage);
-
-    try {
-      let url = null;
-
-      if (searchValue) {
-        if (isAnimePage) {
-          url = `${API_BASE_URL}/anime?q=${searchValue}&page=${nextPage}`;
-        } else if (isMangaPage) {
-          url = `${API_BASE_URL}/manga?q=${searchValue}&page=${nextPage}`;
-        }
-      } else if (genreFilter) {
-        if (isAnimePage) {
-          url = `${API_BASE_URL}/anime?genres=${genreFilter}&page=${nextPage}`;
-        } else if (isMangaPage) {
-          url = `${API_BASE_URL}/manga?genres=${genreFilter}&page=${nextPage}`;
-        }
-      } else {
-        if (isAnimePage) {
-          url = `${API_BASE_URL}/seasons/now?&limit=20&page=${nextPage}`;
-        } else if (isMangaPage) {
-          url = `${API_BASE_URL}/top/manga?&limit=10&page=${nextPage}`;
-        }
-      }
-
-      if (url) {
-        const response = await fetch(url);
-
-        if (response.ok) {
-          const data = await response.json();
-          if (isAnimePage) {
-            setAnimeList((prev) => [...prev, ...data.data]);
-          } else if (isMangaPage) {
-            setMangaList((prev) => [...prev, ...data.data]);
-          }
-
-          setHasMore(data.pagination?.has_next_page || false);
-          console.log("Has more:", data.pagination?.has_next_page);
-        } else {
-          console.error("Error en la respuesta:", response.status);
-          setHasMore(false);
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching more data:", error);
-      setError(error.message);
-      setHasMore(false);
-    } finally {
-      setTimeout(() => {
-        setIsRequesting(false);
-      }, 1000);
+  useEffect(() => {
+    if (animeList.length > 0 && sortCriteria) {
+      const sortedList = sortAnimeList(animeList, sortCriteria, sortOrder);
+      setAnimeList(sortedList);
     }
-  };
+  }, [sortCriteria, sortOrder]);
+
+  const showSortOptions = searchValue || genreFilter;
 
   if (loading && page === 1) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
+    <div className="anime-container">
+      {showSortOptions && (
+        <div className="sort-controls">
+          <label htmlFor="sortCriteria">Ordenar por:</label>
+          <select
+            id="sortCriteria"
+            value={sortCriteria}
+            onChange={(e) => setSortCriteria(e.target.value)}
+          >
+            <option value="popularity">Popularidad</option>
+            <option value="score">Puntuación</option>
+            <option value="title">Título</option>
+            {isMangaPage ? (
+              <option value="chapters">Capítulos</option>
+            ) : (
+              <option value="episodes">Episodios</option>
+            )}
+            <option value="start_date">Fecha de inicio</option>
+          </select>
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+          >
+            <option value="desc">Descendente</option>
+            <option value="asc">Ascendente</option>
+          </select>
+        </div>
+      )}
       <Scroll onLoadMore={fetchMoreData} hasMore={hasMore}>
         {animeList.length > 0 && (
           <section>

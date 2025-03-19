@@ -117,7 +117,16 @@
   transform: translateY(-2px);
 }
 
+.details-section-title{
+  margin-block-start: var(--spacing-xl);
+}
 
+.details-trailer {
+  border: none;
+  width: 100%;
+  height: 30rem;
+  margin-top: var(--spacing-xl);
+}
 
 .details-button {
   padding: var(--spacing-sm) var(--spacing-lg);
@@ -201,5 +210,10 @@
 
   .details-actions {
     flex-direction: column;
+  }
+
+  .details-trailer {
+
+    height: 20rem;
   }
 }

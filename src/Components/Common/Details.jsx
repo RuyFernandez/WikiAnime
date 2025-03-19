@@ -71,14 +71,14 @@ export default function Detail({ type }) {
               </div>
             )}
             
-            {data.aired?.from && (
+            {type === 'anime' && data.aired?.from && (
               <div className="details-meta-item">
                 <FaCalendar className="details-meta-icon" />
                 <span>{new Date(data.aired.from).getFullYear()}</span>
               </div>
             )}
             
-            {data.episodes && (
+            {type === 'anime' && data.episodes && (
               <div className="details-meta-item">
                 <FaClock className="details-meta-icon" />
                 <span>{data.episodes} episodios</span>
@@ -91,6 +91,13 @@ export default function Detail({ type }) {
                 <span>{data.status}</span>
               </div>
             )}
+            
+            {type === 'anime' && data.duration && (
+              <div className="details-meta-item">
+                <FaClock className="details-meta-icon" />
+                <span>{data.duration}</span>
+              </div>
+            )}
           </div>
           
           {data.synopsis && (
@@ -98,7 +105,14 @@ export default function Detail({ type }) {
               <p>{data.synopsis}</p>
             </div>
           )}
-          
+
+          {data.background && (
+            <div className="details-section">
+              <h3 className="details-section-title">Información adicional</h3>
+              <p>{data.background}</p>
+            </div>
+          )}
+
           {data.genres && data.genres.length > 0 && (
             <div className="details-section">
               <h3 className="details-section-title">Géneros</h3>
@@ -109,6 +123,80 @@ export default function Detail({ type }) {
                   </span>
                 ))}
               </div>
+            </div>
+          )}
+
+          {type === 'manga' && (
+            <>
+              {data.chapters && (
+                <div className="details-meta-item">
+                  <span>Capítulos: {data.chapters}</span>
+                </div>
+              )}
+              {data.volumes && (
+                <div className="details-meta-item">
+                  <span>Volúmenes: {data.volumes}</span>
+                </div>
+              )}
+              {data.authors && data.authors.length > 0 && (
+                <div className="details-section">
+                  <h3 className="details-section-title">Autores</h3>
+                  <ul>
+                    {data.authors.map((author) => (
+                      <li key={author.mal_id}>{author.name}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {data.publishers && data.publishers.length > 0 && (
+                <div className="details-section">
+                  <h3 className="details-section-title">Editorial</h3>
+                  <div className="details-publishers">
+                    {data.publishers.map((publisher) => (
+                      <span key={publisher.mal_id} className="details-publisher">
+                        {publisher.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+
+          {type === 'anime' && (
+            <>
+              {data.studios && data.studios.length > 0 && (
+                <div className="details-section">
+                  <h3 className="details-section-title">Estudio de producción</h3>
+                  <div className="details-studios">
+                    {data.studios.map((studio) => (
+                      <span key={studio.mal_id} className="details-studio">
+                        {studio.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {data.trailer && data.trailer.url && (
+                <div>
+                  <h3 className="details-section-title">Tráiler</h3>
+                  <iframe
+                    className="details-trailer"
+                    title="trailer"
+                    src={data.trailer.embed_url}
+                    allowFullScreen
+                  ></iframe>
+                </div>
+              )}
+            </>
+          )}
+
+          {data.url && (
+            <div className="details-section">
+              <h3 className="details-section-title">Enlace oficial</h3>
+              <a href={data.url} target="_blank" rel="noopener noreferrer" className="details-link">
+                Visitar página oficial
+              </a>
             </div>
           )}
         </div>
