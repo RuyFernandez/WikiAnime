@@ -31,7 +31,7 @@ export default function useFetch(url, options = {}) {
             fetch(singleUrl, { ...options, signal }).then((response) => {
               if (!response.ok) {
                 throw new Error(
-                  `Error en la petición a ${singleUrl}: ${response.status}`
+                  `Error fetching data from ${singleUrl}: ${response.statusText || 'Unknown error'}`
                 );
               }
               return response.json();
@@ -48,7 +48,7 @@ export default function useFetch(url, options = {}) {
 
           if (!response.ok) {
             throw new Error(
-              `Error en la petición a ${url}: ${response.status}`
+              `Error fetching data from ${url}: ${response.statusText || 'Unknown error'}`
             );
           }
 
@@ -59,8 +59,11 @@ export default function useFetch(url, options = {}) {
           }
         }
       } catch (err) {
-        if (isMounted && err.name !== "AbortError") {
-          setError(err.message || "Error desconocido en la petición");
+        if (isMounted && err.name !== 'AbortError') {
+          const errorMessage = err.message.includes('Failed to fetch')
+            ? 'Network error: Please check your internet connection'
+            : err.message;
+          setError(errorMessage);
         }
       } finally {
         if (isMounted) {
